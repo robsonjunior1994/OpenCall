@@ -9,28 +9,36 @@ namespace OpenCall.Models
     public class Chamado
     {
         public int Id { get; set; }
-        [Required]
         public string Protocolo { get; set; }
-        [Required]
         public string Tipo { get; set; }
-        [Required]
         public string Endereco { get; set; }
-        [Required]
         public string Descricao { get; set; }
-        [Required]
         public string Status { get; set; }
         public DateTime Data { get; set; }
 
 
         internal bool EhValido()
         {
-            if (Tipo != "água" || Tipo != "esgoto" || Tipo != "luz" 
-                || Tipo != "convivência" || Tipo != "outros" 
-                && string.IsNullOrEmpty(Endereco) && string.IsNullOrEmpty(Descricao))
+            var teste = string.IsNullOrEmpty(Descricao);
+
+            if (Tipo == "água" || Tipo == "esgoto" || Tipo == "luz" 
+                || Tipo == "convivência" || Tipo == "outro")
             {
-                return false;
+                 if ( 
+                    string.IsNullOrEmpty(Endereco) == false
+                    && string.IsNullOrEmpty(Descricao) == false
+                    && string.IsNullOrEmpty(Status) == false
+                    && string.IsNullOrEmpty(Protocolo) == false
+                    && string.IsNullOrEmpty(Tipo) == false
+                    )
+                {
+
+                    return true;
+
+                }
             }
-            return true;
+
+            return false;
         }
 
     }

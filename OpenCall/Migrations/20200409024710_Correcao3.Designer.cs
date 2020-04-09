@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OpenCall;
 
 namespace OpenCall.Migrations
 {
     [DbContext(typeof(AppContext))]
-    partial class AppContextModelSnapshot : ModelSnapshot
+    [Migration("20200409024710_Correcao3")]
+    partial class Correcao3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,15 +29,18 @@ namespace OpenCall.Migrations
 
                     b.Property<DateTime>("Data");
 
-                    b.Property<string>("Descricao");
+                    b.Property<string>("Descricao")
+                        .IsRequired();
 
-                    b.Property<string>("Endereco");
+                    b.Property<string>("Endereco")
+                        .IsRequired();
 
                     b.Property<string>("Protocolo");
 
                     b.Property<string>("Status");
 
-                    b.Property<string>("Tipo");
+                    b.Property<string>("Tipo")
+                        .IsRequired();
 
                     b.HasKey("Id");
 

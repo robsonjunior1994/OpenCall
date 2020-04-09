@@ -23,17 +23,20 @@ namespace OpenCall.Repository
 
         public void Atualizar(Chamado chamado)
         {
-            throw new NotImplementedException();
+            _appContext.Chamados.Update(chamado);
+            _appContext.SaveChanges();
         }
 
         public void Deletar(int id)
         {
-            throw new NotImplementedException();
+            Chamado chamado = Get(id);
+            _appContext.Chamados.Remove(chamado);
+            _appContext.SaveChanges();
         }
 
         public Chamado Get(int id)
         {
-            throw new NotImplementedException();
+           return _appContext.Chamados.FirstOrDefault(chamado => chamado.Id == id);
         }
 
         public IList<Chamado> Listar()

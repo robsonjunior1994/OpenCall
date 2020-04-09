@@ -25,11 +25,41 @@ namespace OpenCall.Controllers
         {
             var lista = _chamadoRepository.Listar();
 
+
+            Chamado chamadoExemplo = new Chamado()
+            {
+                Tipo = "água",
+                Endereco = "Rua de exemplo",
+                Descricao = "Descrição do chamado",
+                Status = "Aberto",
+                Data = DateTime.Now
+            };
+
             if(lista == null)
             {
-                return BadRequest();
+                return NotFound();
+                //return BadRequest(); não sei qual o melhor para uma lista que não foi preenchida
             }
+            lista.Add(chamadoExemplo);
             return Ok(lista);
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult Get([FromRoute]int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var chamado = _chamadoRepository.Get(id);
+
+            if (chamado == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(chamado);
         }
 
         [HttpPost]
@@ -39,13 +69,46 @@ namespace OpenCall.Controllers
             chamado.Protocolo = DateTime.Now.ToString();
             chamado.Status = "aberto";
 
-            if (!chamado.EhValido() && !ModelState.IsValid)
+            if (chamado.EhValido())
             {
-                return BadRequest(ModelState);
+                _chamadoRepository.Adicionar(chamado);
+                return CreatedAtAction("Get", new { id = chamado.Id }, chamado);
             }
 
-            _chamadoRepository.Adicionar(chamado);
-            return Ok();
+            return BadRequest(chamado);
+            
+        }
+
+        [HttpPut]
+        public ActionResult Update([FromBody] Chamado chamado)
+        {
+
+            Chamado chamadoDoBanco = _chamadoRepository.Get(chamado.Id);
+
+            if (chamadoDoBanco != null && chamado.EhValido())
+            {
+                _chamadoRepository.Atualizar(chamado);
+                return Ok(chamado);
+            }
+
+            return BadRequest();
+
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete([FromRoute] int id)
+        {
+            if (Convert.ToString(id).All(char.IsDigit))
+            {
+                Chamado chamadoDoBanco = _chamadoRepository.Get(id);
+                if (chamadoDoBanco != null)
+                { 
+                    _chamadoRepository.Deletar(id);
+                    return NoContent();
+                }
+            }
+
+            return NotFound();
         }
     }
 }
