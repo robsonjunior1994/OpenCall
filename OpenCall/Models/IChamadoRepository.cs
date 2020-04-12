@@ -11,6 +11,7 @@ namespace OpenCall.Models
         void Atualizar(Chamado chamado);
         void Deletar(int id);
         IList<Chamado> Listar();
+        IList<Chamado> ListarComFiltro(string status);
         Chamado Get(int id);
     }
 }

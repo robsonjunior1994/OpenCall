@@ -43,5 +43,10 @@ namespace OpenCall.Repository
         {
             return _appContext.Chamados.ToList();
         }
+
+        public IList<Chamado> ListarComFiltro(string status)
+        {
+            return _appContext.Chamados.Where(chamado => chamado.Status == status).ToList();
+        }
     }
 }

@@ -21,29 +21,50 @@ namespace OpenCall.Controllers
 
         // GET api/chamado
         [HttpGet]
-        public ActionResult Get()
+        public ActionResult Get(string status)
         {
-            var lista = _chamadoRepository.Listar();
+            IList<Chamado> lista = null;
 
-
-            Chamado chamadoExemplo = new Chamado()
+            if(string.IsNullOrEmpty(status) == false) { 
+                if( 
+                    status == "aberto" ||
+                    status == "fechado" || 
+                    status == "emandamento"
+                  )
+                    {
+                         lista = _chamadoRepository.ListarComFiltro(status);
+                    }
+            }
+            else
             {
-                Tipo = "água",
-                Endereco = "Rua de exemplo",
-                Descricao = "Descrição do chamado",
-                Status = "Aberto",
-                Data = DateTime.Now
-            };
+                 lista = _chamadoRepository.Listar();
+            }
 
             if(lista == null)
             {
                 return NotFound();
                 //return BadRequest(); não sei qual o melhor para uma lista que não foi preenchida
             }
-            lista.Add(chamadoExemplo);
+
+            if(lista.Count <= 0)
+            {
+                Chamado chamadoExemplo = new Chamado()
+                {
+                    Tipo = "água",
+                    Endereco = "Rua de exemplo",
+                    Descricao = "Descrição do chamado",
+                    Status = "Aberto",
+                    Data = DateTime.Now
+                };
+
+                lista.Add(chamadoExemplo);
+
+            }
+
             return Ok(lista);
         }
 
+        //GET api/chamado/2
         [HttpGet("{id}")]
         public ActionResult Get([FromRoute]int id)
         {
@@ -62,6 +83,7 @@ namespace OpenCall.Controllers
             return Ok(chamado);
         }
 
+        //POST api/chamado
         [HttpPost]
         public ActionResult Post([FromBody] Chamado chamado)
         {
@@ -79,15 +101,20 @@ namespace OpenCall.Controllers
             
         }
 
+        //PUT api/chamado
         [HttpPut]
         public ActionResult Update([FromBody] Chamado chamado)
         {
 
             Chamado chamadoDoBanco = _chamadoRepository.Get(chamado.Id);
 
+            chamadoDoBanco.Status = chamado.Status;
+            chamadoDoBanco.Descricao = chamado.Descricao;
+            chamadoDoBanco.Endereco = chamado.Endereco;
+
             if (chamadoDoBanco != null && chamado.EhValido())
             {
-                _chamadoRepository.Atualizar(chamado);
+                _chamadoRepository.Atualizar(chamadoDoBanco);
                 return Ok(chamado);
             }
 
@@ -95,6 +122,7 @@ namespace OpenCall.Controllers
 
         }
 
+        //DELETE api/chamado/1
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
