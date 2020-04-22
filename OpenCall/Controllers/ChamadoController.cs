@@ -43,7 +43,6 @@ namespace OpenCall.Controllers
             if(lista == null)
             {
                 return NotFound();
-                //return BadRequest(); não sei qual o melhor para uma lista que não foi preenchida
             }
 
             if(lista.Count <= 0)
