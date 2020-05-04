@@ -65,7 +65,7 @@ namespace OpenCall.Controllers
 
         //GET api/chamado/2
         [HttpGet("{id}")]
-        public ActionResult Get(int id)
+        public ActionResult Get([FromRoute] int id)
         {
             var chamado = _chamadoRepository.Get(id);
 
