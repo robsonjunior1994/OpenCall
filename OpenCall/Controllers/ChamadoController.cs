@@ -65,13 +65,8 @@ namespace OpenCall.Controllers
 
         //GET api/chamado/2
         [HttpGet("{id}")]
-        public ActionResult Get([FromRoute]int id)
+        public ActionResult Get(int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var chamado = _chamadoRepository.Get(id);
 
             if (chamado == null)
