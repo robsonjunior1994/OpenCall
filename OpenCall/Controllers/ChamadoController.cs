@@ -106,7 +106,6 @@ namespace OpenCall.Controllers
         [HttpPut]
         public ActionResult Update([FromBody] Chamado chamado)
         {
-
             Chamado chamadoDoBanco = _chamadoRepository.Get(chamado.Id);
 
             chamadoDoBanco.Status = chamado.Status;
@@ -120,7 +119,6 @@ namespace OpenCall.Controllers
             }
 
             return BadRequest();
-
         }
 
         //DELETE api/chamado/1

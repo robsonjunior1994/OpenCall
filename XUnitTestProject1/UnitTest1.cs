@@ -18,7 +18,7 @@ namespace XUnitTestProject1
 
         public void CriarChamadoController()
         {
-            sutChamado = new ChamadoController(chamadoRepositoryMock.Object);
+            sutChamado = new ChamadoController(chamadoRepositoryMock.Object, usuarioRepositoryMock.Object);
             sutUsuario = new UsuarioController(usuarioRepositoryMock.Object);
         }
 
