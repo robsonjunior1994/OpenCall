@@ -89,7 +89,7 @@ namespace XUnitTestProject1
  
             //act
             chamadoRepositoryMock.Setup(x => x.Listar()).Returns(chamados);
-            var retorno = sutChamado.Get("open") as OkObjectResult;
+            var retorno = sutChamado.Get("open");
             //var teste = retorno.Value as List<Chamado>;
           
             //assert
@@ -112,6 +112,23 @@ namespace XUnitTestProject1
 
             //assert
             Assert.True(teste.Count == 1);
+        }
+
+        [Fact]
+        public void DeveriaFalharPassandoUmParametroSemSerUmInteiro()
+        {
+            //arrange
+            CriarMock();
+            CriarChamadoController();
+
+            IList<Chamado> chamados = new List<Chamado>();
+
+            //act
+            chamadoRepositoryMock.Setup(x => x.Listar()).Returns(chamados);
+            var retorno = sutChamado.Get(1+'a') as OkObjectResult;
+            
+            //assert
+            Assert.True(retorno == null);
         }
 
     }

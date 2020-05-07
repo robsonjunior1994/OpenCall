@@ -15,6 +15,14 @@ namespace OpenCall.Models
         public string Descricao { get; set; }
         public string Status { get; set; }
         public DateTime Data { get; set; }
+        public Usuario User { get; set; }
+
+        public Chamado()
+        {
+            Data = DateTime.Now;
+            Protocolo = DateTime.Now.ToString("HH"+"mm"+"ss"+"ff"+"d"+"M"+"yyyy");
+            Status = "aberto";
+        }
 
 
         internal bool EhValido()
@@ -24,17 +32,18 @@ namespace OpenCall.Models
             if (Tipo == "água" || Tipo == "esgoto" || Tipo == "luz" 
                 || Tipo == "convivência" || Tipo == "outro")
             {
-                 if ( 
-                    string.IsNullOrEmpty(Endereco) == false
-                    && string.IsNullOrEmpty(Descricao) == false
-                    && string.IsNullOrEmpty(Status) == false
-                    && string.IsNullOrEmpty(Protocolo) == false
-                    && string.IsNullOrEmpty(Tipo) == false
+                if (
+                   string.IsNullOrEmpty(Endereco) == false
+                   && string.IsNullOrEmpty(Descricao) == false
+                   && string.IsNullOrEmpty(Status) == false
+                   && string.IsNullOrEmpty(Protocolo) == false
+                   && string.IsNullOrEmpty(Tipo) == false
                     )
                 {
-
-                    return true;
-
+                    //if (User.EhValido())
+                    //{
+                        return true;
+                    //}
                 }
             }
 

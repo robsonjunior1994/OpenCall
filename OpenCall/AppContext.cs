@@ -10,6 +10,7 @@ namespace OpenCall
     public class AppContext : DbContext
     {
         public DbSet<Chamado> Chamados { get; set; }
+        public DbSet<Usuario> Usuario { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

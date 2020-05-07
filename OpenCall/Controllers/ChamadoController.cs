@@ -13,16 +13,19 @@ namespace OpenCall.Controllers
     public class ChamadoController : ControllerBase
     {
         private readonly IChamadoRepository _chamadoRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
 
-        public ChamadoController(IChamadoRepository chamadoRepository)
+        public ChamadoController(IChamadoRepository chamadoRepository, IUsuarioRepository usuarioRepository)
         {
             _chamadoRepository = chamadoRepository;
+            _usuarioRepository = usuarioRepository;
         }
 
         // GET api/chamado
         [HttpGet]
         public ActionResult Get(string status)
         {
+            
             IList<Chamado> lista = null;
 
             if(string.IsNullOrEmpty(status) == false) { 
@@ -79,20 +82,24 @@ namespace OpenCall.Controllers
 
         //POST api/chamado
         [HttpPost]
-        public ActionResult Post([FromBody] Chamado chamado)
+        public ActionResult Post([FromBody]Chamado chamado)
         {
-            chamado.Data = DateTime.Now;
-            chamado.Protocolo = DateTime.Now.ToString();
-            chamado.Status = "aberto";
+            UsuarioService usuarioService = new UsuarioService(_usuarioRepository);
 
-            if (chamado.EhValido())
+            Usuario usuarioDoBanco = usuarioService.Login(chamado.User);
+
+            if (usuarioDoBanco != null)
             {
-                _chamadoRepository.Adicionar(chamado);
-                return CreatedAtAction("Get", new { id = chamado.Id }, chamado);
-            }
+                chamado.User = usuarioDoBanco;
 
-            return BadRequest(chamado);
+                if (chamado.EhValido())
+                {
+                    _chamadoRepository.Adicionar(chamado);
+                    return CreatedAtAction("Get", new { id = chamado.Id }, chamado);
+                }
+            }       
             
+            return BadRequest(chamado); 
         }
 
         //PUT api/chamado

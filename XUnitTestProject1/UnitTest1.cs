@@ -13,14 +13,19 @@ namespace XUnitTestProject1
         internal ChamadoController sutChamado;
         internal Mock<IChamadoRepository> chamadoRepositoryMock;
 
+        internal UsuarioController sutUsuario;
+        internal Mock<IUsuarioRepository> usuarioRepositoryMock;
+
         public void CriarChamadoController()
         {
             sutChamado = new ChamadoController(chamadoRepositoryMock.Object);
+            sutUsuario = new UsuarioController(usuarioRepositoryMock.Object);
         }
 
         public void CriarMock()
         {
             this.chamadoRepositoryMock = new Mock<IChamadoRepository>();
+            this.usuarioRepositoryMock = new Mock<IUsuarioRepository>();
         }
     }
 }

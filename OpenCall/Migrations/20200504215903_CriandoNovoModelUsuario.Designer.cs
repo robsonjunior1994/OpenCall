@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OpenCall;
 
 namespace OpenCall.Migrations
 {
     [DbContext(typeof(AppContext))]
-    partial class AppContextModelSnapshot : ModelSnapshot
+    [Migration("20200504215903_CriandoNovoModelUsuario")]
+    partial class CriandoNovoModelUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,11 +39,11 @@ namespace OpenCall.Migrations
 
                     b.Property<string>("Tipo");
 
-                    b.Property<int?>("UserId");
+                    b.Property<int?>("userId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("userId");
 
                     b.ToTable("Chamados");
                 });
@@ -67,9 +69,9 @@ namespace OpenCall.Migrations
 
             modelBuilder.Entity("OpenCall.Models.Chamado", b =>
                 {
-                    b.HasOne("OpenCall.Models.Usuario", "User")
+                    b.HasOne("OpenCall.Models.Usuario", "user")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("userId");
                 });
 #pragma warning restore 612, 618
         }

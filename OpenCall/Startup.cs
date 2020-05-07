@@ -28,6 +28,8 @@ namespace OpenCall
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IChamadoRepository, ChamadoRepository>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
             services.AddScoped<AppContext>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
