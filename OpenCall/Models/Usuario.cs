@@ -19,8 +19,7 @@ namespace OpenCall.Models
         internal bool EhValido()
         {
             if(
-                Id > 0
-                && string.IsNullOrEmpty(Nome) == false
+                 string.IsNullOrEmpty(Nome) == false
                 && string.IsNullOrEmpty(Sobrenome) == false
                 && string.IsNullOrEmpty(Email) == false
                 && string.IsNullOrEmpty(Senha) == false

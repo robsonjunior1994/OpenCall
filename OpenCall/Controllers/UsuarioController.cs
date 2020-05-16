@@ -33,20 +33,6 @@ namespace OpenCall.Controllers
             }
         }
 
-        //GET api/usuario
-        [HttpGet("{id}")]
-        public ActionResult Get([FromRoute] int id)
-        {
-            var usuario = _usuarioRepository.Get(id);
-            if(usuario == null)
-            {
-                return NotFound();
-            } else
-            {
-                return Ok(usuario);
-            }
-        }
-
         //POST api/usuario/login
         [Route("login")]
         [HttpPost]
@@ -60,15 +46,66 @@ namespace OpenCall.Controllers
                 var key = usuario.Key;
 
                 if (usuario != null)
-                {                  
+                {
                     return Ok(new { key = key });
                 }
                 return StatusCode(403);
-                
-            } else
+
+            }
+            else
             {
                 return BadRequest();
             }
         }
+
+        //PUT api/usuario/id
+        [HttpPatch]
+        public ActionResult Iditar([FromBody] Usuario usuario, [FromHeader] string UserKey)
+        {
+            UsuarioService usuarioService = new UsuarioService(_usuarioRepository);
+
+            if (usuarioService.ValidaKey(UserKey))
+            {
+                if (usuario.EhValido())
+                {
+                    Usuario usuarioDoBanco = _usuarioRepository.GetUsuarioForKey(UserKey);
+                    usuarioDoBanco.Nome = usuario.Nome;
+                    usuarioDoBanco.Sobrenome = usuario.Sobrenome;
+                    usuarioDoBanco.Email = usuario.Email;
+                    usuarioDoBanco.Senha = usuario.Senha;
+
+                    _usuarioRepository.Atualizar(usuarioDoBanco);
+
+                    return Ok(usuarioDoBanco);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            else
+            {
+                return StatusCode(403);
+            }
+
+        }
+
+
+        // Funções do administrador do sistema.. 
+        //GET api/usuario/id
+        [HttpGet("{id}")]
+        public ActionResult Get([FromRoute] int id)
+        {
+            var usuario = _usuarioRepository.Get(id);
+            if(usuario == null)
+            {
+                return NotFound();
+            } else
+            {
+                return Ok(usuario);
+            }
+        }
+
+        
     }
 }

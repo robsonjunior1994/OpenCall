@@ -21,7 +21,7 @@ namespace OpenCall.Models
                 var user = _usuarioRepository.Login(usuario);
                 Random randNum = new Random(2);
                 user.DataKey = DateTime.Now.AddDays(1);
-                user.Key =randNum.Next(5000, 100000).ToString();
+                user.Key = MD5Hash.Hash.Content(usuario.Email+DateTime.Now.ToString("HH" + "mm" + "ss" + "ff" + "d" + "M" + "yyyy"));
                 _usuarioRepository.Atualizar(user);
                 return user;
             } else
