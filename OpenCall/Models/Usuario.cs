@@ -13,6 +13,8 @@ namespace OpenCall.Models
         public string Sobrenome { get; set; }
         public string Email { get; set; }
         public string Senha { get; set; }
+        public string Key { get; set; }
+        public DateTime DataKey { get; set; }
 
         internal bool EhValido()
         {

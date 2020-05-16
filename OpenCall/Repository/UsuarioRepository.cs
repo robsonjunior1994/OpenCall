@@ -21,6 +21,12 @@ namespace OpenCall.Repository
             _appContext.SaveChanges();
         }
 
+        public void Atualizar(Usuario user)
+        {
+            _appContext.Usuario.Update(user);
+            _appContext.SaveChanges();
+        }
+
         public Usuario Get(int id)
         {
             return _appContext.Usuario.FirstOrDefault(usuario => usuario.Id == id);
@@ -30,6 +36,19 @@ namespace OpenCall.Repository
         {
            return _appContext.Usuario.FirstOrDefault
                 (userBanco => userBanco.Email == UsuarioRecebido.Email && userBanco.Senha == UsuarioRecebido.Senha);
+        }
+
+        public Usuario GetUsuarioForKey(string key)
+        {
+            Usuario user = _appContext.Usuario.FirstOrDefault(usuario => usuario.Key == key);
+            if( user != null)
+            {
+                return user;
+            } else
+            {
+                return null;
+            }
+
         }
     }
 }

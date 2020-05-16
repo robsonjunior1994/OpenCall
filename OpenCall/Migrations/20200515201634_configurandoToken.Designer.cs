@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OpenCall;
 
 namespace OpenCall.Migrations
 {
     [DbContext(typeof(AppContext))]
-    partial class AppContextModelSnapshot : ModelSnapshot
+    [Migration("20200515201634_configurandoToken")]
+    partial class configurandoToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,17 +54,17 @@ namespace OpenCall.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("DataKey");
+                    b.Property<DateTime>("DataToken");
 
                     b.Property<string>("Email");
-
-                    b.Property<string>("Key");
 
                     b.Property<string>("Nome");
 
                     b.Property<string>("Senha");
 
                     b.Property<string>("Sobrenome");
+
+                    b.Property<string>("Token");
 
                     b.HasKey("Id");
 

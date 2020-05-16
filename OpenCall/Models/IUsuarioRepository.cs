@@ -10,5 +10,7 @@ namespace OpenCall.Models
         void Adicionar(Usuario usuario);
         Usuario Get(int id);
         Usuario Login(Usuario usuario);
+        void Atualizar(Usuario user);
+        Usuario GetUsuarioForKey(string key);
     }
 }

@@ -18,12 +18,36 @@ namespace OpenCall.Models
         {
             if(!string.IsNullOrEmpty(usuario.Email) && !string.IsNullOrEmpty(usuario.Senha))
             {
-                return _usuarioRepository.Login(usuario);
+                var user = _usuarioRepository.Login(usuario);
+                Random randNum = new Random(2);
+                user.DataKey = DateTime.Now.AddDays(1);
+                user.Key =randNum.Next(5000, 100000).ToString();
+                _usuarioRepository.Atualizar(user);
+                return user;
             } else
             {
                 return null;
             }
 
+        }
+
+        public bool ValidaKey(string key)
+        {
+            Usuario user = _usuarioRepository.GetUsuarioForKey(key);
+            if(user == null || user.DataKey < DateTime.Now)
+            {
+                return false;
+            } else
+            {
+                return true;
+            }
+
+        }
+
+        public Usuario GetForKey(string key)
+        {
+            Usuario user = _usuarioRepository.GetUsuarioForKey(key);
+            return user;
         }
     }
 }

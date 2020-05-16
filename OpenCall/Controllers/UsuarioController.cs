@@ -48,24 +48,27 @@ namespace OpenCall.Controllers
         }
 
         //POST api/usuario/login
+        [Route("login")]
         [HttpPost]
-        public ActionResult Login([FromBody] string email, string senha)
+        public ActionResult Login([FromBody] Usuario user)
         {
-            Usuario user = new Usuario()
+            UsuarioService usuarioService = new UsuarioService(_usuarioRepository);
+
+            if (!string.IsNullOrEmpty(user.Email) && !string.IsNullOrEmpty(user.Senha))
             {
-                Email = email,
-                Senha = senha
-            };
-            if(!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(senha))
-            {
-               user = _usuarioRepository.Login(user);
-                return Ok(user);
+                Usuario usuario = usuarioService.Login(user);
+                var key = usuario.Key;
+
+                if (usuario != null)
+                {                  
+                    return Ok(new { key = key });
+                }
+                return StatusCode(403);
+                
             } else
             {
-                return NotFound();
+                return BadRequest();
             }
-            
-
         }
     }
 }

@@ -23,83 +23,109 @@ namespace OpenCall.Controllers
 
         // GET api/chamado
         [HttpGet]
-        public ActionResult Get(string status)
+        public ActionResult Get(string status, [FromHeader]string UserKey)
         {
-            
-            IList<Chamado> lista = null;
+            UsuarioService usuarioService = new UsuarioService(_usuarioRepository);
 
-            if(string.IsNullOrEmpty(status) == false) { 
-                if( 
-                    status == "aberto" ||
-                    status == "fechado" || 
-                    status == "emandamento"
-                  )
-                    {
-                         lista = _chamadoRepository.ListarComFiltro(status);
-                    }
-            }
-            else
+            if (usuarioService.ValidaKey(UserKey))
             {
-                 lista = _chamadoRepository.Listar();
-            }
+                IList<Chamado> lista = null;
 
-            if(lista == null)
-            {
-                return NotFound();
-            }
-
-            if(lista.Count <= 0)
-            {
-                Chamado chamadoExemplo = new Chamado()
+                if (string.IsNullOrEmpty(status) == false)
                 {
-                    Tipo = "água",
-                    Endereco = "Rua de exemplo",
-                    Descricao = "Descrição do chamado",
-                    Status = "Aberto",
-                    Data = DateTime.Now
-                };
+                    if (
+                        status == "aberto" ||
+                        status == "fechado" ||
+                        status == "emandamento"
+                      )
+                    {
+                        lista = _chamadoRepository.ListarComFiltro(status);
+                    }
+                }
+                else
+                {
+                    lista = _chamadoRepository.Listar();
+                }
 
-                lista.Add(chamadoExemplo);
+                if (lista == null)
+                {
+                    return NotFound();
+                }
 
+                if (lista.Count <= 0)
+                {
+                    Chamado chamadoExemplo = new Chamado()
+                    {
+                        Tipo = "água",
+                        Endereco = "Rua de exemplo",
+                        Descricao = "Descrição do chamado",
+                        Status = "Aberto",
+                        Data = DateTime.Now
+                    };
+
+                    lista.Add(chamadoExemplo);
+
+                }
+
+                return Ok(lista);
+            } else
+            {
+                return BadRequest();
             }
 
-            return Ok(lista);
+
         }
 
         //GET api/chamado/2
         [HttpGet("{id}")]
-        public ActionResult Get([FromRoute] int id)
+        public ActionResult Get([FromRoute] int id, [FromHeader]string UserKey)
         {
-            var chamado = _chamadoRepository.Get(id);
+            UsuarioService usuarioService = new UsuarioService(_usuarioRepository);
 
-            if (chamado == null)
+            if (usuarioService.ValidaKey(UserKey))
             {
-                return NotFound();
-            }
+                var chamado = _chamadoRepository.Get(id);
 
-            return Ok(chamado);
+                if (chamado == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(chamado);
+            } else
+            {
+                return StatusCode(403);
+            }
+            
         }
 
         //POST api/chamado
         [HttpPost]
-        public ActionResult Post([FromBody]Chamado chamado)
+        public ActionResult Post([FromBody]Chamado chamado, [FromHeader]string UserKey)
         {
             UsuarioService usuarioService = new UsuarioService(_usuarioRepository);
 
-            Usuario usuarioDoBanco = usuarioService.Login(chamado.User);
-
-            if (usuarioDoBanco != null)
+            if (usuarioService.ValidaKey(UserKey))
             {
-                chamado.User = usuarioDoBanco;
 
-                if (chamado.EhValido())
+                Usuario usuarioDoBanco = usuarioService.GetForKey(UserKey);
+
+                if (usuarioDoBanco != null)
                 {
-                    _chamadoRepository.Adicionar(chamado);
-                    return CreatedAtAction("Get", new { id = chamado.Id }, chamado);
+                    chamado.User = usuarioDoBanco;
+
+                    if (chamado.EhValido())
+                    {
+                        _chamadoRepository.Adicionar(chamado);
+                        return CreatedAtAction("Get", new { id = chamado.Id }, chamado);
+                    }
                 }
-            }       
-            
-            return BadRequest(chamado); 
+
+                return BadRequest(chamado);
+            } else
+            {
+                return StatusCode(403);
+            }
         }
 
         //PUT api/chamado
