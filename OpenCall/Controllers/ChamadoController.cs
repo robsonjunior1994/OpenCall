@@ -130,38 +130,54 @@ namespace OpenCall.Controllers
 
         //PUT api/chamado
         [HttpPut]
-        public ActionResult Update([FromBody] Chamado chamado)
+        public ActionResult Update([FromBody] Chamado chamado, [FromHeader] string UserKey)
         {
-            Chamado chamadoDoBanco = _chamadoRepository.Get(chamado.Id);
+            UsuarioService usuarioService = new UsuarioService(_usuarioRepository);
 
-            chamadoDoBanco.Status = chamado.Status;
-            chamadoDoBanco.Descricao = chamado.Descricao;
-            chamadoDoBanco.Endereco = chamado.Endereco;
-
-            if (chamadoDoBanco != null && chamado.EhValido())
+            if (usuarioService.ValidaKey(UserKey))
             {
-                _chamadoRepository.Atualizar(chamadoDoBanco);
-                return Ok(chamado);
-            }
+                Chamado chamadoDoBanco = _chamadoRepository.Get(chamado.Id);
 
-            return BadRequest();
+                chamadoDoBanco.Status = chamado.Status;
+                chamadoDoBanco.Descricao = chamado.Descricao;
+                chamadoDoBanco.Endereco = chamado.Endereco;
+
+                if (chamadoDoBanco != null && chamado.EhValido())
+                {
+                    _chamadoRepository.Atualizar(chamadoDoBanco);
+                    return Ok(chamado);
+                }
+
+                return BadRequest();
+            } else
+            {
+                return StatusCode(403);
+            }
         }
 
         //DELETE api/chamado/1
         [HttpDelete("{id}")]
-        public ActionResult Delete([FromRoute] int id)
+        public ActionResult Delete([FromRoute] int id, [FromHeader] string UserKey)
         {
-            if (Convert.ToString(id).All(char.IsDigit))
-            {
-                Chamado chamadoDoBanco = _chamadoRepository.Get(id);
-                if (chamadoDoBanco != null)
-                { 
-                    _chamadoRepository.Deletar(id);
-                    return NoContent();
-                }
-            }
+            UsuarioService usuarioService = new UsuarioService(_usuarioRepository);
 
-            return NotFound();
+            if (usuarioService.ValidaKey(UserKey))
+            {
+                if (Convert.ToString(id).All(char.IsDigit))
+                {
+                    Chamado chamadoDoBanco = _chamadoRepository.Get(id);
+                    if (chamadoDoBanco != null)
+                    {
+                        _chamadoRepository.Deletar(id);
+                        return NoContent();
+                    }
+                }
+
+                return NotFound();
+            } else
+            {
+                return StatusCode(403);
+            }
         }
     }
 }
