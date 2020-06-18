@@ -45,7 +45,7 @@ namespace OpenCall
             {
                 app.UseHsts();
             }
-
+            app.UseCors(op => op.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());
             app.UseHttpsRedirection();
             app.UseMvc();
         }
