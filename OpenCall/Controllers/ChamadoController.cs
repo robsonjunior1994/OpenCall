@@ -21,6 +21,13 @@ namespace OpenCall.Controllers
             _usuarioRepository = usuarioRepository;
         }
 
+        [HttpGet]
+        [Route("pong")]
+        public async Task<IActionResult> Get()
+        {
+            return Ok(new { Mensagem = "pong"});
+        }
+
         // GET api/chamado
         [HttpGet]
         public ActionResult Get(string status, [FromHeader]string UserKey)
