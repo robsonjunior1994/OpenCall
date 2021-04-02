@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using OpenCall.Interface;
 using OpenCall.Models;
 using OpenCall.Repository;
 using System;
@@ -28,9 +29,8 @@ namespace OpenCall
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IChamadoRepository, ChamadoRepository>();
-            services.AddTransient<IUsuarioRepository, UsuarioRepository>();
-            services.AddTransient<AppContext>();
+            services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<AppContext>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

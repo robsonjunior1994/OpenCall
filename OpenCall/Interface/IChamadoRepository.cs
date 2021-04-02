@@ -1,9 +1,10 @@
-﻿using System;
+﻿using OpenCall.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OpenCall.Models
+namespace OpenCall.Interface
 {
     public interface IChamadoRepository
     {
