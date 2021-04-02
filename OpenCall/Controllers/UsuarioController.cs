@@ -14,10 +14,12 @@ namespace OpenCall.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IUsuarioService _usuarioService;
 
-        public UsuarioController(IUsuarioRepository usuarioRepository)
+        public UsuarioController(IUsuarioRepository usuarioRepository, IUsuarioService usuarioService)
         {
             _usuarioRepository = usuarioRepository;
+            _usuarioService = usuarioService;
         }
 
         //POST api/usuario
@@ -39,11 +41,11 @@ namespace OpenCall.Controllers
         [HttpPost]
         public ActionResult Login([FromBody] Usuario user)
         {
-            UsuarioService usuarioService = new UsuarioService(_usuarioRepository);
+            //UsuarioService usuarioService = new UsuarioService(_usuarioRepository);
 
             if (!string.IsNullOrEmpty(user.Email) && !string.IsNullOrEmpty(user.Senha))
             {
-                Usuario usuario = usuarioService.Login(user);
+                Usuario usuario = _usuarioService.Login(user);
                 var key = usuario.Key;
 
                 if (usuario != null)
@@ -63,9 +65,9 @@ namespace OpenCall.Controllers
         [HttpPatch]
         public ActionResult Iditar([FromBody] Usuario usuario, [FromHeader] string UserKey)
         {
-            UsuarioService usuarioService = new UsuarioService(_usuarioRepository);
+            //UsuarioService usuarioService = new UsuarioService(_usuarioRepository);
 
-            if (usuarioService.ValidaKey(UserKey))
+            if (_usuarioService.ValidaKey(UserKey))
             {
                 if (usuario.EhValido())
                 {

@@ -3,6 +3,7 @@ using OpenCall.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace OpenCall.Services
@@ -16,10 +17,14 @@ namespace OpenCall.Services
         {
             _usuarioService = usuarioService;
             _chamadoRepository = chamadoRepository;
+                       
         }
-        public IList<Chamado> PegarPorStatus(string status, string userKey)
+        public async Task<IList<Chamado>> PegarPorStatusAsync(string status, string userKey)
         {
-            if (_usuarioService.ValidaKey(userKey))
+            AutenticacaoService autenticacaoService = new AutenticacaoService(new HttpClient());
+
+            //if (_usuarioService.ValidaKey(userKey))
+            if (await autenticacaoService.ValidarKey(userKey))
             {
                 IList<Chamado> lista = null;
 

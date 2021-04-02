@@ -14,6 +14,7 @@ using OpenCall.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace OpenCall
@@ -30,8 +31,12 @@ namespace OpenCall
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IChamadoRepository, ChamadoRepository>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IChamadoService, ChamadoService>();
+            services.AddScoped<HttpClient>();
             services.AddScoped<AppContext>();
 
             services.AddControllers();

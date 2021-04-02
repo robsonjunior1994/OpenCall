@@ -31,7 +31,7 @@ namespace OpenCall.Controllers
         [HttpGet]
         public ActionResult Get(string status, [FromHeader]string userKey)
         {
-            var ListaDechamados = _chamadoService.PegarPorStatus(status, userKey);
+            var ListaDechamados = _chamadoService.PegarPorStatusAsync(status, userKey);
 
             if (ListaDechamados == null)
             {
