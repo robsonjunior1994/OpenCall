@@ -11,9 +11,6 @@ namespace OpenCall.Interface
         Usuario Login(Usuario usuario);
         bool ValidaKey(string key);
         Usuario GetForKey(string key);
-        IList<Chamado> PegarPorTipoDeStatus(string status, string userKey);
-        bool Cadastrar(Chamado chamado, string UserKey);
-        bool Atualizar(Chamado chamado, string userKey);
-        bool Deletar(int id, string userKey);
+
     }
 }

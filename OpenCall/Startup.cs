@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using OpenCall.Interface;
 using OpenCall.Models;
 using OpenCall.Repository;
+using OpenCall.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,7 @@ namespace OpenCall
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IChamadoService, ChamadoService>();
             services.AddScoped<AppContext>();
 
             services.AddControllers();

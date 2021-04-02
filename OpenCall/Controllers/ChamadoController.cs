@@ -13,11 +13,11 @@ namespace OpenCall.Controllers
     [ApiController]
     public class ChamadoController : ControllerBase
     {
-        private readonly IUsuarioService _usuarioService;
+        private readonly IChamadoService _chamadoService;
 
-        public ChamadoController(IUsuarioService usuarioService)
+        public ChamadoController(IChamadoService chamadoService)
         {
-            _usuarioService = usuarioService;
+            _chamadoService = chamadoService;
         }
 
         [HttpGet]
@@ -31,7 +31,7 @@ namespace OpenCall.Controllers
         [HttpGet]
         public ActionResult Get(string status, [FromHeader]string userKey)
         {
-            var ListaDechamados = _usuarioService.PegarPorTipoDeStatus(status, userKey);
+            var ListaDechamados = _chamadoService.PegarPorStatus(status, userKey);
 
             if (ListaDechamados == null)
             {
@@ -43,31 +43,25 @@ namespace OpenCall.Controllers
 
         //GET api/chamado/2
         [HttpGet("{id}")]
-        public ActionResult Get([FromRoute] int id, [FromHeader]string UserKey)
+        public ActionResult Get([FromRoute] int id, [FromHeader]string userKey)
         {
-            
-            if (_usuarioService.ValidaKey(UserKey))
+            var chamadoRetornado = _chamadoService.PegarPorId(id, userKey);
+
+            if (chamadoRetornado != null)
             {
-                var chamado = _chamadoRepository.Get(id);
-
-                if (chamado == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(chamado);
+                return Ok(chamadoRetornado);
             } else
             {
-                return StatusCode(403);
+                return NotFound();
             }
-            
+
         }
 
         //POST api/chamado
         [HttpPost]
         public ActionResult Post([FromBody]Chamado chamado, [FromHeader]string UserKey)
         {
-            if(_usuarioService.Cadastrar(chamado, UserKey) == true)
+            if(_chamadoService.Cadastrar(chamado, UserKey) == true)
             {
                 return CreatedAtAction("Get", new { id = chamado.Id }, chamado);
             }
@@ -82,7 +76,7 @@ namespace OpenCall.Controllers
         [HttpPut]
         public ActionResult Update([FromBody] Chamado chamado, [FromHeader] string UserKey)
         {
-            if(_usuarioService.Atualizar(chamado, UserKey))
+            if(_chamadoService.Atualizar(chamado, UserKey))
             {
                 return Ok(chamado);
             } else
@@ -95,7 +89,7 @@ namespace OpenCall.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id, [FromHeader] string userKey)
         {
-            if(_usuarioService.Deletar(id, userKey))
+            if(_chamadoService.Deletar(id, userKey))
             {
                 return NoContent();
             } else
