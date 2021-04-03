@@ -9,7 +9,7 @@ namespace OpenCall.Interface
     public interface IChamadoService
     {
         Task<IList<Chamado>> PegarPorStatusAsync(string status, string userKey);
-        bool Cadastrar(Chamado chamado, string UserKey);
+        Task<object> Cadastrar(Chamado chamado, string UserKey);
         bool Atualizar(Chamado chamado, string userKey);
         bool Deletar(int id, string userKey);
         object PegarPorId(int id, string userKey);

@@ -29,9 +29,9 @@ namespace OpenCall.Controllers
 
         // GET api/chamado
         [HttpGet]
-        public ActionResult Get(string status, [FromHeader]string userKey)
+        public async Task<ActionResult> Get(string status, [FromHeader]string userKey)
         {
-            var ListaDechamados = _chamadoService.PegarPorStatusAsync(status, userKey);
+            var ListaDechamados = await _chamadoService.PegarPorStatusAsync(status, userKey);
 
             if (ListaDechamados == null)
             {
@@ -59,15 +59,16 @@ namespace OpenCall.Controllers
 
         //POST api/chamado
         [HttpPost]
-        public ActionResult Post([FromBody]Chamado chamado, [FromHeader]string UserKey)
+        public async Task<ActionResult> Post([FromBody]Chamado chamado, [FromHeader]string UserKey)
         {
-            if(_chamadoService.Cadastrar(chamado, UserKey) == true)
+
+            if (await _chamadoService.Cadastrar(chamado, UserKey) != null)
             {
                 return CreatedAtAction("Get", new { id = chamado.Id }, chamado);
             }
             else
             {
-                return BadRequest(chamado);
+                return BadRequest();
             }
 
         }

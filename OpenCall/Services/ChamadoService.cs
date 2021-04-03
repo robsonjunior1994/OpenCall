@@ -4,7 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using Microsoft.Extensions.Primitives;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Net.Http.Json;
+
 
 namespace OpenCall.Services
 {
@@ -12,22 +16,21 @@ namespace OpenCall.Services
     {
         private IUsuarioService _usuarioService;
         private IChamadoRepository _chamadoRepository;
+        private IAutenticacaoService _autenticacaoService;
 
-        public ChamadoService(IUsuarioService usuarioService, IChamadoRepository chamadoRepository)
+        public ChamadoService(IUsuarioService usuarioService, IChamadoRepository chamadoRepository, IAutenticacaoService autenticacaoService)
         {
             _usuarioService = usuarioService;
             _chamadoRepository = chamadoRepository;
-                       
+            _autenticacaoService = autenticacaoService;
+
         }
         public async Task<IList<Chamado>> PegarPorStatusAsync(string status, string userKey)
         {
-            AutenticacaoService autenticacaoService = new AutenticacaoService(new HttpClient());
+            IList<Chamado> lista = null;
 
-            //if (_usuarioService.ValidaKey(userKey))
-            if (await autenticacaoService.ValidarKey(userKey))
+            if (await _autenticacaoService.ValidarKey(userKey))
             {
-                IList<Chamado> lista = null;
-
                 if (string.IsNullOrEmpty(status) == false)
                 {
                     if (
@@ -38,15 +41,11 @@ namespace OpenCall.Services
                     {
                         lista = _chamadoRepository.ListarComFiltro(status);
                     }
-                }
-                else
-                {
-                    lista = _chamadoRepository.Listar();
-                }
 
-                if (lista == null)
-                {
-                    return null;
+                    else
+                    {
+                        lista = _chamadoRepository.Listar();
+                    }
                 }
 
                 if (lista.Count <= 0)
@@ -61,43 +60,44 @@ namespace OpenCall.Services
                     };
 
                     lista.Add(chamadoExemplo);
-
                 }
+            }
 
-                return lista;
-            }
-            else
-            {
-                return null;
-            }
+            return lista;
         }
 
-        public bool Cadastrar(Chamado chamado, string userKey)
+        public async Task<object> Cadastrar(Chamado chamado, string userKey)
         {
-            if (_usuarioService.ValidaKey(userKey))
+            if (await _autenticacaoService.ValidarKey(userKey))
             {
 
-                Usuario usuarioDoBanco = _usuarioService.GetForKey(userKey);
+                var response = await _autenticacaoService.BuscarUsuario(userKey);
 
-                if (usuarioDoBanco != null)
+                if (response != null)
                 {
-                    chamado.User = usuarioDoBanco;
+                    var usuarioResponse = response.Content.ReadFromJsonAsync<Usuario>().Result;
+                    chamado.User.Id = usuarioResponse.Id;
+                    chamado.User.Email = usuarioResponse.Email;
+                    chamado.User.DataKey = usuarioResponse.DataKey;
+                    chamado.User.Nome = usuarioResponse.Nome;
+                    chamado.User.Senha = usuarioResponse.Senha;
+                    chamado.User.Sobrenome = usuarioResponse.Sobrenome;
 
                     if (chamado.EhValido())
                     {
                         _chamadoRepository.Adicionar(chamado);
                         //return CreatedAtAction("Get", new { id = chamado.Id }, chamado);
-                        return true;
+                        return chamado;
                     }
                 }
 
                 //return BadRequest(chamado);
-                return false;
+                return null;
             }
             else
             {
                 //return StatusCode(403);
-                return false;
+                return null;
             }
         }
 

@@ -18,7 +18,7 @@ namespace OpenCall.Repository
 
         public void Adicionar(Chamado chamado)
         {
-            _appContext.Chamados.Add(chamado);
+            _appContext.Chamados.AddAsync(chamado);
             _appContext.SaveChanges();
         }
 
