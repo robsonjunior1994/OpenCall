@@ -31,7 +31,8 @@ namespace OpenCall.Repository
         public void Deletar(int id)
         {
             Chamado chamado = Get(id);
-            _appContext.Chamados.Remove(chamado);
+            chamado.Ativo = false;
+            _appContext.Chamados.Update(chamado);
             _appContext.SaveChanges();
         }
 
@@ -42,12 +43,12 @@ namespace OpenCall.Repository
 
         public IList<Chamado> Listar()
         {
-            return _appContext.Chamados.ToList();
+            return _appContext.Chamados.Where(c => c.Ativo == true).ToList();
         }
 
         public IList<Chamado> ListarComFiltro(string status)
         {
-            var Lista = _appContext.Chamados.Where(chamado => chamado.Status == status).ToList();
+            var Lista = Listar().Where(chamado => chamado.Status == status).ToList();
             return Lista;
         }
     }

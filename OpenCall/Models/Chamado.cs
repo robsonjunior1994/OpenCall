@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenCall.ReponseRequest;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,15 +16,21 @@ namespace OpenCall.Models
         public string Descricao { get; set; }
         public string Status { get; set; }
         public DateTime Data { get; set; }
-        public Usuario User { get; set; }
+        public int IdUser { get; set; }
+        public bool Ativo { get; set; }
 
-        public Chamado()
+        public Chamado() { }
+        public Chamado(RequestChamado rc)
         {
             Data = DateTime.Now;
             Protocolo = DateTime.Now.ToString("HH"+"mm"+"ss"+"ff"+"d"+"M"+"yyyy");
             Status = "aberto";
-        }
+            Ativo = true;
 
+            Tipo = rc.Tipo;
+            Endereco = rc.Endereco;
+            Descricao = rc.Descricao;
+        }
 
         internal bool EhValido()
         {

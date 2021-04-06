@@ -1,5 +1,6 @@
 ﻿using OpenCall.Interface;
 using OpenCall.Models;
+using OpenCall.ReponseRequest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,18 @@ namespace OpenCall.Services
             if(response.StatusCode.ToString() == "OK")
             {
                 return response;
+            }
+
+            return null;
+        }
+
+        public async Task<ReponseUsuario> RetornarUsuario(string userKey)
+        {
+            HttpResponseMessage response = await _client.PostAsJsonAsync("/api/usuario/validarchave", userKey);
+
+            if (response.StatusCode.ToString() == "OK")
+            {
+                return response.Content.ReadFromJsonAsync<ReponseUsuario>().Result;
             }
 
             return null;

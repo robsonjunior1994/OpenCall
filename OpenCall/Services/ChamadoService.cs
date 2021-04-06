@@ -8,7 +8,8 @@ using Microsoft.Extensions.Primitives;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Net.Http.Json;
-
+using Newtonsoft.Json;
+using OpenCall.ReponseRequest;
 
 namespace OpenCall.Services
 {
@@ -25,7 +26,7 @@ namespace OpenCall.Services
             _autenticacaoService = autenticacaoService;
 
         }
-        public async Task<IList<Chamado>> PegarPorStatusAsync(string status, string userKey)
+        public async Task<IList<Chamado>> ListarPorStatus(string status, string userKey)
         {
             IList<Chamado> lista = null;
 
@@ -66,112 +67,87 @@ namespace OpenCall.Services
             return lista;
         }
 
-        public async Task<object> Cadastrar(Chamado chamado, string userKey)
+        public async Task<object> Cadastrar(RequestChamado RequestChamado, string userKey)
         {
-            if (await _autenticacaoService.ValidarKey(userKey))
+            var response = await _autenticacaoService.BuscarUsuario(userKey);
+
+            if (response != null)
             {
+                var usuarioResponse = response.Content.ReadFromJsonAsync<ReponseUsuario>();
 
-                var response = await _autenticacaoService.BuscarUsuario(userKey);
+                Chamado chamado = new Chamado(RequestChamado);
+                chamado.IdUser = usuarioResponse.Result.Id;
 
-                if (response != null)
+                if (chamado.EhValido())
                 {
-                    var usuarioResponse = response.Content.ReadFromJsonAsync<Usuario>().Result;
-                    chamado.User.Id = usuarioResponse.Id;
-                    chamado.User.Email = usuarioResponse.Email;
-                    chamado.User.DataKey = usuarioResponse.DataKey;
-                    chamado.User.Nome = usuarioResponse.Nome;
-                    chamado.User.Senha = usuarioResponse.Senha;
-                    chamado.User.Sobrenome = usuarioResponse.Sobrenome;
+                    _chamadoRepository.Adicionar(chamado);
+                    return chamado;
+                }
+            }
+
+            return null;
+        }
+
+        public async Task<bool> Atualizar(RequestChamado requestChamado, string userKey)
+        {
+            var response = await _autenticacaoService.ValidarKey(userKey);
+
+            if (response != false)
+            {
+                var chamadoDoBanco = _chamadoRepository.Get(requestChamado.Id);
+
+                if(chamadoDoBanco != null)
+                {
+                    Chamado chamado = chamadoDoBanco;
+
+                    chamado.Descricao = requestChamado.Descricao;
+                    chamado.Endereco = requestChamado.Endereco;
+                    chamado.Tipo = requestChamado.Tipo;
 
                     if (chamado.EhValido())
                     {
-                        _chamadoRepository.Adicionar(chamado);
-                        //return CreatedAtAction("Get", new { id = chamado.Id }, chamado);
-                        return chamado;
-                    }
-                }
-
-                //return BadRequest(chamado);
-                return null;
-            }
-            else
-            {
-                //return StatusCode(403);
-                return null;
-            }
-        }
-
-        public bool Atualizar(Chamado chamado, string userKey)
-        {
-            if (_usuarioService.ValidaKey(userKey))
-            {
-                Chamado chamadoDoBanco = _chamadoRepository.Get(chamado.Id);
-
-                chamadoDoBanco.Status = chamado.Status;
-                chamadoDoBanco.Descricao = chamado.Descricao;
-                chamadoDoBanco.Endereco = chamado.Endereco;
-
-                if (chamadoDoBanco != null && chamado.EhValido())
-                {
-                    _chamadoRepository.Atualizar(chamadoDoBanco);
-                    //return Ok(chamado);
-                    return true;
-                }
-
-                //return BadRequest();
-                return false;
-            }
-            else
-            {
-                //return StatusCode(403);
-                return false;
-            }
-        }
-
-        public bool Deletar(int id, string userKey)
-        {
-            if (_usuarioService.ValidaKey(userKey))
-            {
-                if (Convert.ToString(id).All(char.IsDigit))
-                {
-                    Chamado chamadoDoBanco = _chamadoRepository.Get(id);
-                    if (chamadoDoBanco != null)
-                    {
-                        _chamadoRepository.Deletar(id);
-                        //return NoContent();
+                        _chamadoRepository.Atualizar(chamado);
                         return true;
                     }
                 }
+            }
 
-                //return NotFound();
-                return false;
-            }
-            else
-            {
-                //return StatusCode(403);
-                return false;
-            }
+            return false;
         }
 
-        public object PegarPorId(int id, string userKey)
+        public async Task<bool> Deletar(int id, string userKey)
         {
-            if (_usuarioService.ValidaKey(userKey))
+            ReponseUsuario usuarioDoBanco = await _autenticacaoService.RetornarUsuario(userKey);
+
+            if (usuarioDoBanco != null)
+            {
+                Chamado chamadoDoBanco = _chamadoRepository.Get(id);
+                if (chamadoDoBanco.IdUser == usuarioDoBanco.Id)
+                {
+                    _chamadoRepository.Deletar(id);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public async Task<object> PegarPorId(int id, string userKey)
+        {
+            var response = await _autenticacaoService.BuscarUsuario(userKey);
+            var usuarioDoBanco = response.Content.ReadFromJsonAsync<ReponseUsuario>().Result;
+
+            if (response != null)
             {
                 var chamado = _chamadoRepository.Get(id);
 
-                if (chamado == null)
+                if (chamado.IdUser == usuarioDoBanco.Id)
                 {
-                    //return NotFound();
-                    return null;
+                    return chamado;
                 }
+            }
 
-                return chamado;
-            }
-            else
-            {
-                //return StatusCode(403);
-                return null;
-            }
+            return null;
         }
     }
 }

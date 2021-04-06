@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OpenCall.Interface;
 using OpenCall.Models;
+using OpenCall.ReponseRequest;
 
 namespace OpenCall.Controllers
 {
@@ -31,7 +32,7 @@ namespace OpenCall.Controllers
         [HttpGet]
         public async Task<ActionResult> Get(string status, [FromHeader]string userKey)
         {
-            var ListaDechamados = await _chamadoService.PegarPorStatusAsync(status, userKey);
+            var ListaDechamados = await _chamadoService.ListarPorStatus(status, userKey);
 
             if (ListaDechamados == null)
             {
@@ -43,9 +44,9 @@ namespace OpenCall.Controllers
 
         //GET api/chamado/2
         [HttpGet("{id}")]
-        public ActionResult Get([FromRoute] int id, [FromHeader]string userKey)
+        public async Task<ActionResult> Get([FromRoute] int id, [FromHeader]string userKey)
         {
-            var chamadoRetornado = _chamadoService.PegarPorId(id, userKey);
+            var chamadoRetornado = await _chamadoService.PegarPorId(id, userKey);
 
             if (chamadoRetornado != null)
             {
@@ -59,12 +60,14 @@ namespace OpenCall.Controllers
 
         //POST api/chamado
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody]Chamado chamado, [FromHeader]string UserKey)
+        public async Task<ActionResult> Post([FromBody]RequestChamado requestChamado, [FromHeader]string UserKey)
         {
+            var resultado = await _chamadoService.Cadastrar(requestChamado, UserKey);
 
-            if (await _chamadoService.Cadastrar(chamado, UserKey) != null)
+            if (resultado != null)
             {
-                return CreatedAtAction("Get", new { id = chamado.Id }, chamado);
+                //return CreatedAtAction("Get", new { id = chamado.Id }, chamado);
+                return Ok(resultado);
             }
             else
             {
@@ -75,11 +78,11 @@ namespace OpenCall.Controllers
 
         //PUT api/chamado
         [HttpPut]
-        public ActionResult Update([FromBody] Chamado chamado, [FromHeader] string UserKey)
+        public async Task<ActionResult> Update([FromBody] RequestChamado RequestChamado, [FromHeader] string UserKey)
         {
-            if(_chamadoService.Atualizar(chamado, UserKey))
+            if(await _chamadoService.Atualizar(RequestChamado, UserKey))
             {
-                return Ok(chamado);
+                return Ok();
             } else
             {
                 return BadRequest();
@@ -88,9 +91,9 @@ namespace OpenCall.Controllers
 
         //DELETE api/chamado/1
         [HttpDelete("{id}")]
-        public ActionResult Delete([FromRoute] int id, [FromHeader] string userKey)
+        public async Task<ActionResult> Delete([FromRoute] int id, [FromHeader] string userKey)
         {
-            if(_chamadoService.Deletar(id, userKey))
+            if(await _chamadoService.Deletar(id, userKey))
             {
                 return NoContent();
             } else

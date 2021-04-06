@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenCall.ReponseRequest;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -9,6 +10,7 @@ namespace OpenCall.Interface
     public interface IAutenticacaoService
     {
         Task<HttpResponseMessage> BuscarUsuario(string userKey);
+        Task<ReponseUsuario> RetornarUsuario(string userKey);
         Task<bool> ValidarKey(string userKey);
     }
 }
