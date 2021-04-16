@@ -45,7 +45,8 @@ namespace OpenCall.Controllers
         //Pega todos os chamados de um usuário
         // GET api/chamado
         [HttpGet]
-        public async Task<ActionResult> Get([FromHeader] string userKey)
+        [Route("usuario")]
+        public async Task<ActionResult> GetTodosChamadosDeUmUsuario([FromHeader] string userKey)
         {
             var ListaDechamados = await _chamadoService.GetTodosChamadoDeUmUsuario(userKey);
 
