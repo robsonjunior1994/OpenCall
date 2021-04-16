@@ -14,5 +14,6 @@ namespace OpenCall.Interface
         IList<Chamado> Listar();
         IList<Chamado> ListarComFiltro(string status);
         Chamado Get(int id);
+        IList<Chamado> ListarPorUsuario(int idUsuario);
     }
 }

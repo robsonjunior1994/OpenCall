@@ -14,5 +14,6 @@ namespace OpenCall.Interface
         Task<bool> Atualizar(RequestChamado RequestChamado, string userKey);
         Task<bool> Deletar(int id, string userKey);
         Task<object> PegarPorId(int id, string userKey);
+        Task<IList<Chamado>> GetTodosChamadoDeUmUsuario(string userKey);
     }
 }

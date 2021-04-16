@@ -51,5 +51,12 @@ namespace OpenCall.Repository
             var Lista = Listar().Where(chamado => chamado.Status == status).ToList();
             return Lista;
         }
+
+        public IList<Chamado> ListarPorUsuario(int idUsuario)
+        {
+            var ListaDechamadoDeUmUsuario = Listar().Where(c => c.IdUser == idUsuario).ToList();
+
+            return ListaDechamadoDeUmUsuario;
+        }
     }
 }

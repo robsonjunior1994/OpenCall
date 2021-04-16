@@ -27,7 +27,7 @@ namespace OpenCall.Controllers
         {
             return Ok(new { Mensagem = "pong"});
         }
-
+        //Pega todos os chamados ou pega chamados por filtro
         // GET api/chamado
         [HttpGet]
         public async Task<ActionResult> Get(string status, [FromHeader]string userKey)
@@ -42,6 +42,22 @@ namespace OpenCall.Controllers
             return Ok(ListaDechamados);
         }
 
+        //Pega todos os chamados de um usuário
+        // GET api/chamado
+        [HttpGet]
+        public async Task<ActionResult> Get([FromHeader] string userKey)
+        {
+            var ListaDechamados = await _chamadoService.GetTodosChamadoDeUmUsuario(userKey);
+
+            if (ListaDechamados == null)
+            {
+                return BadRequest();
+            }
+
+            return Ok(ListaDechamados);
+        }
+
+        //Pega um chamado por id
         //GET api/chamado/2
         [HttpGet("{id}")]
         public async Task<ActionResult> Get([FromRoute] int id, [FromHeader]string userKey)
@@ -58,6 +74,7 @@ namespace OpenCall.Controllers
 
         }
 
+        //Registar um novo chamado
         //POST api/chamado
         [HttpPost]
         public async Task<ActionResult> Post([FromBody]RequestChamado requestChamado, [FromHeader]string UserKey)
@@ -76,6 +93,7 @@ namespace OpenCall.Controllers
 
         }
 
+        //Atualiza um chamado
         //PUT api/chamado
         [HttpPut]
         public async Task<ActionResult> Update([FromBody] RequestChamado RequestChamado, [FromHeader] string UserKey)
@@ -89,6 +107,7 @@ namespace OpenCall.Controllers
             } 
         }
 
+        //Deleta um chamado
         //DELETE api/chamado/1
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete([FromRoute] int id, [FromHeader] string userKey)

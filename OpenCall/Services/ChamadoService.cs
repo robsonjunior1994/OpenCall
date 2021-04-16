@@ -149,5 +149,12 @@ namespace OpenCall.Services
 
             return null;
         }
+
+        public async Task<IList<Chamado>> GetTodosChamadoDeUmUsuario(string userKey)
+        {
+            ReponseUsuario usuario = await _autenticacaoService.RetornarUsuario(userKey);
+            var ListaDechamadoDeUmUsuario = _chamadoRepository.ListarPorUsuario(usuario.Id);
+            return ListaDechamadoDeUmUsuario;
+        }
     }
 }
